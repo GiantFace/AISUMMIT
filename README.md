@@ -21,3 +21,4 @@ npm run build
 
 Ha más néven van a repo, frissítsd a workflow-t és a `VITE_BASE` környezeti változót.
 # AISUMMIT
+# Deploy fix
