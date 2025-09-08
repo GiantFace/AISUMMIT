@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export default function App() {
   const RAW = `Idő\tNyelv\tTerem\tTípus\tCím\tElőadó(k)\tPozíció / Szervezet
@@ -96,6 +96,11 @@ export default function App() {
   const [stageFilter, setStageFilter] = useState<string[]>([]);
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
   const [onlyUpcoming, setOnlyUpcoming] = useState(false);
+  
+  // Időzóna és valós idejű óra
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [timezone, setTimezone] = useState('Europe/Budapest');
+  const [isRefreshingTime, setIsRefreshingTime] = useState(false);
 
   type Item = {
     time: string;
@@ -148,6 +153,21 @@ export default function App() {
 
   const items = useMemo(() => parse(RAW), [RAW]);
 
+  // Idő frissítése minden másodpercben (valós idejű)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // 1 másodperc = 1000 ms
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Időzóna automatikus észlelése
+  useEffect(() => {
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setTimezone(detectedTimezone);
+  }, []);
+
   const languages = useMemo(
     () =>
       Array.from(
@@ -197,6 +217,60 @@ export default function App() {
 
   const firstUpcomingIdx = filtered.findIndex((i) => i.minutes >= nowMinutes);
 
+  // Idő frissítése API-ból
+  const handleRefreshTime = useCallback(async () => {
+    setIsRefreshingTime(true);
+    try {
+      const endpoints = [
+        `/api/time?timezone=${timezone}`, // Our Vite plugin endpoint
+        'https://worldtimeapi.org/api/timezone/' + timezone,
+        'https://timeapi.io/api/Time/current/zone?timeZone=' + timezone
+      ];
+
+      let success = false;
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint);
+          if (response.ok) {
+            const timeData = await response.json();
+            if (timeData.formatted_time || timeData.datetime) {
+              setCurrentTime(new Date(timeData.formatted_time || timeData.datetime));
+              success = true;
+              break;
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (!success) {
+        setCurrentTime(new Date()); // Fallback to local time
+      }
+    } catch (error) {
+      setCurrentTime(new Date()); // Fallback to local time
+    } finally {
+      setIsRefreshingTime(false);
+    }
+  }, [timezone]);
+
+  // Időzóna változtatása
+  const handleTimezoneChange = useCallback((newTimezone: string) => {
+    setTimezone(newTimezone);
+  }, []);
+
+  // Elérhető időzónák
+  const availableTimezones = useMemo(() => [
+    'Europe/Budapest',
+    'Europe/London',
+    'Europe/Berlin',
+    'Europe/Paris',
+    'America/New_York',
+    'America/Los_Angeles',
+    'Asia/Tokyo',
+    'UTC'
+  ], []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
@@ -205,6 +279,25 @@ export default function App() {
             <h1 className="text-lg font-semibold leading-tight">AI Summit 2025 – Program</h1>
             <p className="text-xs text-gray-500">Mobilbarát nézet • gyors szűrők • élő "Most" gomb</p>
             <p className="text-xs text-gray-400">Események: {items.length} • Szűrt: {filtered.length}</p>
+            <div className="mt-1 text-xs text-gray-600 flex items-center gap-2">
+              <span className="font-medium">Aktuális idő:</span>
+              <span>{currentTime.toLocaleTimeString('hu-HU', {
+                timeZone: timezone,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+              })}</span>
+              <span className="text-gray-500">({timezone})</span>
+              <button
+                onClick={handleRefreshTime}
+                disabled={isRefreshingTime}
+                className={`text-blue-600 hover:text-blue-800 underline ${isRefreshingTime ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="Idő frissítése"
+                aria-label="Idő frissítése"
+              >
+                {isRefreshingTime ? '⏳' : '🔄'}
+              </button>
+            </div>
           </div>
           <a
             href="#first"
@@ -254,6 +347,21 @@ export default function App() {
           <div className="mt-2 grid grid-cols-1 gap-2">
             <SelectMulti label="Terem" values={stageFilter} onChange={setStageFilter} options={stages} />
             <SelectMulti label="Típus" values={typeFilter} onChange={setTypeFilter} options={types} />
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700">Időzóna:</label>
+              <select
+                value={timezone}
+                onChange={(e) => handleTimezoneChange(e.target.value)}
+                className="text-sm border rounded-lg px-2 py-1 bg-white"
+                aria-label="Időzóna választása"
+              >
+                {availableTimezones.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz.replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </header>
@@ -277,12 +385,22 @@ export default function App() {
       </main>
 
       <footer className="fixed bottom-3 inset-x-0 flex justify-center pointer-events-none">
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="pointer-events-auto shadow px-4 py-2 rounded-full border bg-white text-sm"
-        >
-          ⬆️ Vissza a tetejére
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="pointer-events-auto shadow px-4 py-2 rounded-full border bg-white text-sm"
+            aria-label="Vissza a tetejére"
+          >
+            ⬆️ Vissza a tetejére
+          </button>
+          <div className="pointer-events-auto shadow px-3 py-2 rounded-full border bg-white text-xs text-gray-600">
+            🕐 {currentTime.toLocaleTimeString('hu-HU', {
+              timeZone: timezone,
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </div>
+        </div>
       </footer>
     </div>
   );
