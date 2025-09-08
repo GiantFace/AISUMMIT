@@ -23,3 +23,4 @@ Ha más néven van a repo, frissítsd a workflow-t és a `VITE_BASE` környezeti
 # AISUMMIT
 # Deploy fix
 # GitHub Pages enabled
+# Use correct workflow
