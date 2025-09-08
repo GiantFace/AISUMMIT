@@ -101,6 +101,9 @@ export default function App() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [timezone, setTimezone] = useState('Europe/Budapest');
   const [isRefreshingTime, setIsRefreshingTime] = useState(false);
+  
+  // Hamburger menü állapot
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   type Item = {
     time: string;
@@ -271,10 +274,31 @@ export default function App() {
     'UTC'
   ], []);
 
+  // Menü bezárása
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false);
+  }, []);
+
+  // Szűrők törlése
+  const clearAllFilters = useCallback(() => {
+    setLangFilter([]);
+    setStageFilter([]);
+    setTypeFilter([]);
+    setSearch("");
+    setOnlyUpcoming(false);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
         <div className="max-w-screen-sm mx-auto px-4 py-3 flex items-center gap-3">
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="p-2 rounded-lg border bg-white hover:bg-gray-50"
+            aria-label="Szűrők menü megnyitása"
+          >
+            ☰
+          </button>
           <div className="flex-1">
             <h1 className="text-lg font-semibold leading-tight">AI Summit 2025 – Program</h1>
             <p className="text-xs text-gray-500">Mobilbarát nézet • gyors szűrők • élő "Most" gomb</p>
@@ -307,63 +331,6 @@ export default function App() {
             Most
           </a>
         </div>
-        <div className="max-w-screen-sm mx-auto px-4 pb-3">
-          <div className="flex items-center gap-2">
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Keresés címben, előadóban, szervezetben…"
-              className="w-full rounded-xl border px-3 py-2 text-sm"
-            />
-          </div>
-          <div className="mt-2 flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <FilterChip
-              label={onlyUpcoming ? "Csak közelgő" : "Minden időpont"}
-              active={onlyUpcoming}
-              onClick={() => setOnlyUpcoming((v) => !v)}
-            />
-            {languages.map((l) => (
-              <FilterChip
-                key={l}
-                label={l}
-                active={langFilter.includes(l)}
-                onClick={() =>
-                  setLangFilter((prev) => (prev.includes(l) ? prev.filter((x) => x !== l) : [...prev, l]))
-                }
-              />
-            ))}
-            <button
-              onClick={() => {
-                setLangFilter([]);
-                setStageFilter([]);
-                setTypeFilter([]);
-                setSearch("");
-              }}
-              className="ml-auto text-xs text-gray-600 underline"
-            >
-              Szűrők törlése
-            </button>
-          </div>
-          <div className="mt-2 grid grid-cols-1 gap-2">
-            <SelectMulti label="Terem" values={stageFilter} onChange={setStageFilter} options={stages} />
-            <SelectMulti label="Típus" values={typeFilter} onChange={setTypeFilter} options={types} />
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Időzóna:</label>
-              <select
-                value={timezone}
-                onChange={(e) => handleTimezoneChange(e.target.value)}
-                className="text-sm border rounded-lg px-2 py-1 bg-white"
-                aria-label="Időzóna választása"
-              >
-                {availableTimezones.map((tz) => (
-                  <option key={tz} value={tz}>
-                    {tz.replace('_', ' ')}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
       </header>
 
       <main className="max-w-screen-sm mx-auto px-4 pb-24">
@@ -383,6 +350,146 @@ export default function App() {
           ))}
         </ol>
       </main>
+
+      {/* Oldalsó szűrő menü */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          {/* Háttér overlay */}
+          <div 
+            className="flex-1 bg-black bg-opacity-50" 
+            onClick={closeMenu}
+          />
+          
+          {/* Menü panel */}
+          <div className="w-80 bg-white shadow-xl overflow-y-auto">
+            <div className="p-4 border-b">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Szűrők</h2>
+                <button
+                  onClick={closeMenu}
+                  className="p-2 hover:bg-gray-100 rounded-lg"
+                  aria-label="Menü bezárása"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-4 space-y-4">
+              {/* Keresés */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Keresés
+                </label>
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Címben, előadóban, szervezetben…"
+                  className="w-full rounded-lg border px-3 py-2 text-sm"
+                />
+              </div>
+
+              {/* Időpont szűrő */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Időpont
+                </label>
+                <FilterChip
+                  label={onlyUpcoming ? "Csak közelgő" : "Minden időpont"}
+                  active={onlyUpcoming}
+                  onClick={() => setOnlyUpcoming((v) => !v)}
+                />
+              </div>
+
+              {/* Nyelv szűrők */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nyelv
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {languages.map((l) => (
+                    <FilterChip
+                      key={l}
+                      label={l}
+                      active={langFilter.includes(l)}
+                      onClick={() =>
+                        setLangFilter((prev) => (prev.includes(l) ? prev.filter((x) => x !== l) : [...prev, l]))
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Terem szűrő */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Terem
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {stages.map((stage) => (
+                    <FilterChip
+                      key={stage}
+                      label={stage}
+                      active={stageFilter.includes(stage)}
+                      onClick={() =>
+                        setStageFilter((prev) => (prev.includes(stage) ? prev.filter((x) => x !== stage) : [...prev, stage]))
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Típus szűrő */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Típus
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {types.map((type) => (
+                    <FilterChip
+                      key={type}
+                      label={type}
+                      active={typeFilter.includes(type)}
+                      onClick={() =>
+                        setTypeFilter((prev) => (prev.includes(type) ? prev.filter((x) => x !== type) : [...prev, type]))
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Időzóna */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Időzóna
+                </label>
+                <select
+                  value={timezone}
+                  onChange={(e) => handleTimezoneChange(e.target.value)}
+                  className="w-full text-sm border rounded-lg px-3 py-2 bg-white"
+                  aria-label="Időzóna választása"
+                >
+                  {availableTimezones.map((tz) => (
+                    <option key={tz} value={tz}>
+                      {tz.replace('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Szűrők törlése */}
+              <div className="pt-4 border-t">
+                <button
+                  onClick={clearAllFilters}
+                  className="w-full px-4 py-2 text-sm text-red-600 border border-red-300 rounded-lg hover:bg-red-50"
+                >
+                  Szűrők törlése
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="fixed bottom-3 inset-x-0 flex justify-center pointer-events-none">
         <div className="flex items-center gap-2">
