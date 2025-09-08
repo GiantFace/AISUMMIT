@@ -95,7 +95,7 @@ export default function App() {
   const [langFilter, setLangFilter] = useState<string[]>([]);
   const [stageFilter, setStageFilter] = useState<string[]>([]);
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
-  const [onlyUpcoming, setOnlyUpcoming] = useState(true);
+  const [onlyUpcoming, setOnlyUpcoming] = useState(false);
 
   type Item = {
     time: string;
@@ -204,6 +204,7 @@ export default function App() {
           <div className="flex-1">
             <h1 className="text-lg font-semibold leading-tight">AI Summit 2025 – Program</h1>
             <p className="text-xs text-gray-500">Mobilbarát nézet • gyors szűrők • élő "Most" gomb</p>
+            <p className="text-xs text-gray-400">Események: {items.length} • Szűrt: {filtered.length}</p>
           </div>
           <a
             href="#first"
@@ -259,7 +260,11 @@ export default function App() {
 
       <main className="max-w-screen-sm mx-auto px-4 pb-24">
         {filtered.length === 0 && (
-          <div className="text-center text-gray-500 py-10">Nincs találat a beállított szűrőkre.</div>
+          <div className="text-center text-gray-500 py-10">
+            Nincs találat a beállított szűrőkre.
+            <br />
+            <span className="text-xs">Összes esemény: {items.length}</span>
+          </div>
         )}
 
         <ol className="space-y-3 pt-3">
@@ -382,5 +387,18 @@ function Badge({ children, className = "" }: { children: React.ReactNode; classN
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${className}`}>
       {children}
     </span>
+  );
+}
+
+function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1 rounded-full text-xs font-medium border ${
+        active ? "bg-black text-white border-black" : "bg-white text-gray-900 border-gray-300"
+      }`}
+    >
+      {label}
+    </button>
   );
 }
