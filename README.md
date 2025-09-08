@@ -24,3 +24,4 @@ Ha más néven van a repo, frissítsd a workflow-t és a `VITE_BASE` környezeti
 # Deploy fix
 # GitHub Pages enabled
 # Use correct workflow
+# Redeploy trigger - Mon Sep  8 08:10:32 CEST 2025
