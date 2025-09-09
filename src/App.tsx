@@ -1,95 +1,95 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export default function App() {
-  const RAW = `Idő\tNyelv\tTerem\tTípus\tCím\tElőadó(k)\tPozíció / Szervezet
-9:00\tHUN\tMBH BANK VISIONARY STAG\tKeynote\tAI Summit 2025 megnyitó\tDr. Sulyok Tamás\tMagyarország köztársasági elnöke
-9:00\tHUN\tQUANTUM STAGE\tMegnyitó\tMegnyitó, köszöntő\tDr. Kóka János\tElnök – Doktor24
-9:10\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tA versenyképesség kulcsa az innováció\tNagy Márton\tMagyarország nemzetgazdasági minisztere
-9:10\tHUN\tQUANTUM STAGE\tKeynote\tEgészségügyi adatvagyon: stratégia, értékteremtés és biztonság\tDr. Szócska Miklós\tIgazgató – Semmelweis Egyetem
-9:30\tHUN\tFUTURE LAB\tKeynote\tDigitális szuverenitás és AI: Szabályozás az unióban\tSzolnoki Szabolcs\tTechnológiáért, Űriparért és Védelmi Iparért felelős helyettes államtitkár
-9:30\tHUN\tQUANTUM STAGE\tKerekasztal\tAI az egészségügyben: nemzeti stratégiák, szabályozás és innováció\tPetrovics Tamás\tÜgyvezető igazgató – XUND
-9:30\tHUN\tCINEMATIC STUDIO\tKerekasztal\tRobot a sorok között: önvezető traktorok és döntéshozatal mesterséges intelligenciával\t\t
-9:40\tENG\tMBH BANK VISIONARY STAG\tElőadás\tThe last human invention: AGI?\tDr. Frederik G. Pferdt (GER/USA)\tA Google első és korábbi innovációs nagykövete
-9:50\tHUN/ENG\tFUTURE LAB\tElőadás\tGlobális AI szabályozási esetek\tDr. Olivia J. Erdelyi (NZL)\tProfessor – University of Canterbury & Bonn; Partner – PHI Institute; Auditor – SGS
-10:00\tHUN\tMKIK PROMPT ARÉNA\tKeynote\tMegnyitó\tdr. Balog Ádám\tAlelnök – MKIK; Elnök – KAVOSZ
-10:00\tHUN\tQUANTUM STAGE\tElőadás\tMentőszolgálat 2040 – Adat, döntés és hatékonyság az OMSZ jövőjében\tDr. Csató Gábor\tFőigazgató – Országos Mentőszolgálat
-10:00\tHUN\tVIP LOUNGE\tPódiumbeszélgetés\tVigyázó szemetek Ázsiára vessétek!\tModerátor: Pogátsa Zoltán Résztvevő: Frei Tamás\tSoproni Egyetem LKK; Író
-10:00\tHUN\tMEDIA LAB\tProgram\tVezetett házbejárás\t–\t–
-10:05\tHUN\tMEDIA LAB\tProgram\tVezetett házbejárás\t–\t–
-10:10\tENG\tMBH BANK VISIONARY STAG\tPódiumbeszélgetés\tGlobal AI ecosystem 2025 - challenges for the corporate and institutional sphere\tDr. Tilesch György (USA)\tAlapító elnök, PHI Institute for Augmented Intelligence
-10:10\tHUN\tFUTURE LAB\tElőadás\tAI és jog: Szabályozási modellek és dilemmák\tdr. Vajda Viktor LL.M.\tAI-szakjogász, technológiaszabályozás vezető – Neumann János NKft.
-10:10\tHUN\tCINEMATIC STUDIO\tKerekasztal\tA talaj is beszél a jövőről: AI a talajállapot és termőképesség előrejelzésében\t\t
-10:15\tHUN\tQUANTUM STAGE\tKerekasztal\tMűtő a jövőből – AI-alapú robotika a sebészetben\tModerátor: Dr. Kóka János; Résztvevők: Dr. Berkes István, Dr. Domán István\tDoktor24; TF, SE; Ortopéd sebész
-10:20\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tPromptolás kezdőknek: kezdőlépésektől az AI vállalkozásokig\tKerek István\tVezérigazgató – Everengine
-10:30\tHUN\tFUTURE LAB\tKerekasztal\tAI-t szeretnék, de hogyan? – válaszol a Neumann Társaság\tModerátor: dr. Vajda Viktor LL.M. Résztvevők: Dr. Olivia J. Erdelyi (NZL), Petrányi Dóra\tNeumann János NKft.; University of Canterbury; CMS
-10:40\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tAI-világ Magyarországon - térképen a jövő\tProf. Dr. Palkovics László\tMesterséges intelligenciáért felelős kormánybiztos
-10:50\tHUN\tCINEMATIC STUDIO\tKerekasztal\tA jövő agrármérnöke – hogyan kell tanulnunk és tanítanunk, ha már AI van a traktorban?\t\t
-10:55\tHUN\tQUANTUM STAGE\tElőadás\tAI a precíziós onkológiában\tDr. Peták István\tAlapító, tudományos igazgató – Genomate Health
-11:00\tHUN\tMÉTA OPEN LAB\tKeynote\tEmber, gép, művészet – a jövő új nyelvei\tWeiler Péter\tKépzőművész
-11:05\tHUN\tMEDIA LAB\tElőadás\tAI és a reklámfilm\tHidvégi Zoltán\tAlapító, vezérigazgató – Umbrella
-11:10\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tAI for science, science for AI\tJakab Roland\tVezérigazgató, elnök – HUN-REN, MI Koalíció
-11:10\tHUN\tFUTURE LAB\tKeynote\tMesterséges intelligenciával a korrupció ellen\tBenyovszky Máté\tTárselnök – Magyar Robotikai Szövetség; főszerkesztő – RoboHorizon
-11:10\tHUN\tMÉTA OPEN LAB\tKeynote\tAI 2027: A jövő, ami már a küszöbön van\t-\t-
-11:15\tHUN\tQUANTUM STAGE\tElőadás\tOperációs rendszer az egészségügyhöz – AI-vezérelt platform\tDr. Kóka János\tElnök – Doktor24
-11:30\tHUN\tFUTURE LAB\tElőadás\tGlobális adatvédelem az AI korában\tDr. Kopasz János\tÜgyvéd, adatvédelmi és AI-szabályozási szakértő – Taylor Wessing Hungary
-11:30\tENG\tMÉTA OPEN LAB\tKerekasztal\tAI 2027: A jövő, ami már a küszöbön van\tRami Al Karmi, Zoltan Istvan\tCEO – UMMA.AI; Jövőkutató, politikai jelölt
-11:30\tHUN\tCINEMATIC STUDIO\tKerekasztal\tHol a határ? Klíma kihívások és etikus mesterséges intelligencia az agráriumban\t\t
-11:35\tHUN\tQUANTUM STAGE\tElőadás\tAz orvos és a gép együttműködése az AI-val\tJoó Tamás\tEgyetemi docens, programvezető – SE EMK
-11:50\tHUN\tFUTURE LAB\tElőadás\tMI vagyunk értetek! – az MI-koalíció működése\tTóth Miklós\tSzakmai vezető – Mesterséges Intelligencia Koalíció
-11:50\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tAz AI-verseny rajtja: ki marad talpon a kkv-k közül?\tNémeth Dávid\tAlapító – 1337 Partners
-11:55\t\tQUANTUM STAGE\tEbédszünet\tEBÉDSZÜNET\t-\t-
-12:00\tENG\tMBH BANK VISIONARY STAG\tElőadás\tAI in business: csak viszi a pénzt vagy hozza is?\tKadocsa András\tPartner – McKinsey & Company
-12:00\tHUN\tMÉTA OPEN LAB\tElőadás\tPoszthumanizmus és AI\tNemes Z. Márió\tKöltő, kritikus, esztéta
-12:10\tHUN\tFUTURE LAB\tKerekasztal\tMagyar AI-fejlesztések: jó gyakorlatok, és tévutak\tModerátor: Rádi Balázs (Index) Résztvevők: Sólyom Balázs (Trendency), Tóth Miklós (MI Koalíció)\tújságíró; Chief Data Officer – Trendency Online Zrt.; MI Koalíció
-12:20\tENG\tMBH BANK VISIONARY STAG\tElőadás\tThe New Workplace in the Agentic Age: A summary and practical guide\tDr. Schum Kristóf\tGenerative AI európai szegmens vezető – Amazon Web Services
-12:25\tHUN\tMÉTA OPEN LAB\tKerekasztal\tPoszthumanizmus: a jövő, ahol az ember csak mellékszereplő?\tModerátor: Weiler Péter; Résztvevők: Csepeli György, drMáriás, Horváth Márk, Nemes Z. Márió\tELTE; Társadalomsebész; Filozófus; Esztéta
-12:40\t\tMBH BANK VISIONARY STAG\tEbédszünet\t\t\t
-12:50\tHUN\tFUTURE LAB\tPódiumbeszélgetés\tAlgoritmusok pórázon – önszabályozás a reklámiparban\tdr. Fazekas Ildikó (ÖRT), Lunczner Ádám (Mindshare)\tIgazgató – ÖRT; Innovációs vezető – Mindshare
-12:50\t\tMKIK PROMPT ARÉNA\tEbédszünet\tEBÉDSZÜNET\t-\t-
-13:00\tENG\tQUANTUM STAGE\tElőadás\tWhy the future of connection won’t be human-only\tBryony Cole (USA)\tAlapító – Future of Sex & Sextech School
-13:05\tHUN\tMÉTA OPEN LAB\tKerekasztal\tA popkulturális.hu projekt és az AI eszközök\tModerátor: Weiler Péter; Résztvevők: Boncz Bálint, Koltai Balázs, Nyírő András\tTech Lead; Full-stack fejlesztő; Alapító – Index.hu
-13:20\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tAz „új” CSR: competence-shortage az AI korában\tDr. Aczél Petra\tKommunikációkutató
-13:20\tHUN\tFUTURE LAB\tSzünet\tEbédszünet\t-\t-
-13:20\tHUN\tQUANTUM STAGE\tKeynote\tHogyan alakítja át a technológia az emberi kapcsolatainkat?\tTari Annamária\tKlinikai szakpszichológus, pszichoterapeuta
-13:40\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tAdataink biztonsága az AI-forradalom árnyékában\tKeleti Arthur\tAlapító – ITBN
-13:40\tHUN\tMKIK PROMPT ARÉNA\tKeynote\tBest practices a KKV szektorban\t-\t-
-13:40\tHUN\tQUANTUM STAGE\tElőadás\tLongevity\tIfj. Duda Ernő\tCEO – Medipredict; Elnök – Magyar Biotechnológiai Szövetség
-13:45\tHUN\tMÉTA OPEN LAB\tElőadás\tNéma előadás, művészeti szövegalkotás\tdr. Pálfalusi Zsolt\tFilozófus, esztéta, író
-14:00\tENG\tMBH BANK VISIONARY STAG\tElőadás\tAz AI zabálja az energiát: gondold meg mielőtt emailt küldesz!\tGeorgiu Achilles\tInnováció menedzsment szakértő, előadó
-14:00\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tFejlesztői sikersztorik a KKV szektorban\t-\t-
-14:00\tHUN\tQUANTUM STAGE\tElőadás\tGenerációk és AI-használat\tBereczki Enikő\tGenerációkutató
-14:20\tHUN\tMBH BANK VISIONARY STAG\tPódiumbeszélgetés\tMi történhet, ha az AI rossz kezekbe kerül? Dezinformációs hadviselés, AI-csalások\tHalász Viktor (NBI), Petruska Ferenc (NKE), Rudolf Ferenc (AIIS Kft.)\tFőnyomozó / Docens / AI & IT biztonsági vezető
-14:20\tHUN\tQUANTUM STAGE\tKerekasztal\tAz új kolléga az AI, de hogyan bánjunk vele?\tModerátor: Kálmán Szonja; Résztvevők: Bereczki Enikő, Gáspár József\tDívány; Generációkutató; AI szakértő
-14:30\tHUN\tFUTURE LAB\tKerekasztal\tAI for science, science for AI\tJakab Roland\tVezérigazgató, elnök – HUN-REN, MI Koalíció
-14:30\tHUN\tMKIK PROMPT ARÉNA\tElőadás\tAI-vezérelt banki forradalom – a KKV-kért\tKovásznai Ádám\tBUPA üzletágvezető – MBH
-14:40\tHUN\tMBH BANK VISIONARY STAG\tPódiumbeszélgetés\tMilyen új fenyegetéseket jelent az AI a kiberháborúkban\tKeleti Arthur (ITBN), Rónai Egon (újságíró)\t
-14:50\tHUN\tFUTURE LAB\tElőadás\tKi, miben jó? – AI-kutatások Magyarországon 2025\tDr. Benedek Csaba\tIgazgatóhelyettes – HUN-REN SZTAKI
-14:50\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tMesterségem az AI: feltörekvő tehetségek és innovátorok a hazai ökoszisztémában\tHorváth Balázs\tAlapító – Tech In The City
-14:50\tHUN\tQUANTUM STAGE\tElőadás\tLevel Up Leadership & Soft Skills with AI & VR\tJenei Ágnes\tExecutive Trainer – VR, bio- és neurofeedback
-15:00\tHUN\tMBH BANK VISIONARY STAG\tPódiumbeszélgetés\tFelgyorsítja, vagy teljesen újraírja a startupok életciklusát az AI?\tDeliága Ákos\tTársalapító, vezérigazgató – Talk-A-Bot
-15:00\tHUN\tMEDIA LAB\tProgram\tVezetett házbejárás\t–\t–
-15:05\tHUN\tQUANTUM STAGE\tKerekasztal\tKommunikáció az AI világában: honnan tudjam, hogy emberrel beszélek?\tModerátor: Kálmán Szonja; Résztvevők: Dr. Aczél Petra, dr. Molnár István Jenő, Tari Annamária\tDívány; Kommunikációkutató; Bűnmegelőzési szakértő; Pszichológus
-15:05\tENG\tQUANTUM STAGE\tElőadás\tLights, Camera, Algorithm: The New Era of Film Production\tBrian Nitzkin (USA)\tVP Business Development – Orbitalvs
-15:05\tHUN\tMEDIA LAB\tProgram\tVezetett házbejárás\t–\t–
-15:10\tENG\tFUTURE LAB\tKerekasztal\tItt a szép, új no-code világ\tSzertics Gergely (PHI Institute), Dr. Tuan Trinh (EIT Digital)\tAI szakértő; Regionális igazgató – EIT Digital
-15:10\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tAI eszközök implementációja a nagyvállalatoknál\t-\t-
-15:20\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tBeszerzéstől a létesítmény kezelésig: interaktív vizualizáció az ingatlanszektorban\tSághegyi Péter\tÜgyvezető – AT-PT Kft.
-15:25\tHUN\tQUANTUM STAGE\tElőadás\tMozivásznon túl: az AI hatása a filmkészítésre\tDudás Viktor\tFilmszakértő
-15:30\tHUN\tFUTURE LAB\tElőadás\tHogyan segíthet a kozmosz megfejtésében az AI?\tDr. Kiss László\tFőigazgató – HUN-REN Csillagászati és Földtudományi Kutatóközpont
-15:35\tENG\tMEDIA LAB\tElőadás\tAI és a reklámfilm\tHidvégi Zoltán\tAlapító, vezérigazgató – Umbrella
-15:40\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tAI eszközök a banki siker szolgálatában\tNémeth Dániel\tGeneratív AI bevezetésének vezetője – MBH Bank
-15:50\tHUN\tFUTURE LAB\tElőadás\tFizikus a feedben – tudomány a közösségi médiában\tMolnár Janka Sára\tFizikus, tudománykommunikátor
-16:00\tHUN\tMBH BANK VISIONARY STAG\tElőadás / vita\tMeddig fújható az AI-lufi? Pénzügyi nyomás alatt a fejlesztők?\tModerátor: Szabó Gyula (Index), Előadó: Bukta Gábor (Concorde)\tÚjságíró / Elemzési üzletágvezető
-16:10\tHUN\tFUTURE LAB\tElőadás\tKi a jobb tanár: a természetes vagy a mesterséges intelligencia?\tDr. Veszelszki Ágnes\tDékán – NKE Nemeskürty István Tanárképző Kar
-16:10\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tAmikor az AI testet ölt\tBenyovszky Máté\tTárselnök – Magyar Robotikai Szövetség; Főszerkesztő – RoboHorizon
-16:30\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tParadigmaváltás a gazdaságban: hol vannak a kompetens AI-szakértők?\tJanza Ákos\tÜgyvezető igazgató, AmCham Hungary
-16:30\tHUN\tFUTURE LAB\tElőadás\tAI a szolgálatban – Közszolgálat a mesterséges intelligencia korában\tDr. Belényesi Emese\tEgyetemi docens – NKE
-16:50\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tGeneratív AI és AI Agents: új szövetségesek a CFO-k és pénzügyi vezetők mellett\tSzekeres Viktor\tTulajdonos – Gloster Infokommunikációs Nyrt.
-16:50\tHUN\tFUTURE LAB\tKerekasztal\tTiltás helyett felkészítés – Hogyan válhat az AI az oktatás szövetségesévé?\tDr. Almási Zsolt (PPKE), Dr. Nehéz Károly (ME), Dr. Osztroluczky Sarolta (PPKE)\tEgyetemi docens – PPKE; Intézetigazgató – ME; Adjunktus – PPKE BTK
-16:55\tHUN\tMKIK PROMPT ARÉNA\tWorkshop\tMKIK digitalizációs projektek\t-\t-
-17:10\tHUN\tMBH BANK VISIONARY STAG\tElőadás\tEmberközpontúság az AI korszakban? - sikeres projektek az MBH-nál\tNagy Róbert Tibor\tCTO – MBH Bank
-17:40\tHUN\tMBH BANK VISIONARY STAG\tKerekasztal\tPénzintézeti tevékenység másként: hányféle üzlet hozható ki az adatokból?\t-\t-
-18:10\tENG\tMBH BANK VISIONARY STAG\tElőadás\tTrust the Machine? AI as your financial copilot\tChristian Trummer (AT)\tChief Scientist – Bitpanda`;
+const RAW = `Idő	Nyelv	Terem	Típus	Cím	Előadó(k)	Pozíció / Szervezet
+9:00	HUN	MBH BANK VISIONARY STAGE	Keynote	Algoritmusok a frontvonalon	Szalay-Bobrovniczky Kristóf	Honvédelmi miniszter
+9:00	ENG	FUTURE LAB	Keynote	AI is moving at rocket speed, the NextGen in the pilot's seat - where are we?	Combiz Richard Abdolrahimi (USA)	ServiceNOW – VP, Global Gov Relations
+9:00	HUN	QUANTUM STAGE	Keynote	AI Agent: új felhasználói élmény a kereskedelemben	–	–
+9:00	ENG	MÉTA OPEN LAB	Keynote	Mesterségesintelligencia-fejlesztés a Bertelsmann-nál	Rhys Noelke (GER)	Chief Data Officer – Bertelsmann
+9:20	HUN	MÉTA OPEN LAB	Keynote	Kódolt valóság: gondolkodunk vagy csak görgetünk?	Tófalvy Tamás	Médiakutató, kommunikációs szakember
+9:30	HUN	MBH BANK VISIONARY STAGE	Előadás	„Míg az AI el nem választ”… a hatékonyság és kudarc útjai a honvédelemben	Dr. Németh Gergely	VIKI vezérigazgató
+9:30	ENG	FUTURE LAB	Előadás	AI Governance as an enabler of innovation	Steven Tiell (USA)	SAS Institute – AI Governance Advisory
+9:30	HUN	QUANTUM STAGE	Keynote	Mihez kezdjen ma egy magyar e-kereskedő?	Szigetvári József	Kockázati tőke partner – Portfolion Zrt.
+9:40	HUN	QUANTUM STAGE	Előadás	Mire és hogyan használjuk az AI-t a Libri Bookline-nál? Felhasználási esetek és tanulságok	Deák András	Digitális csatornák igazgató – Libri-Bookline
+9:50	HUN	MBH BANK VISIONARY STAGE	Előadás	VR és MR technológiák és AI alapú katonai megoldások	Kovács Gergely	VIKI XR-fejlesztések vezetője
+9:50	ENG	FUTURE LAB	Előadás	AI snake oil - over promising vendors and unrealistic expectations	Jóföldi Endre	Precognox – CEO, alapító
+10:00	HUN	MKIK PROMPT ARÉNA	Előadás	AI az ötlettől a vállalkozásig	Csókay Ákos	MKIK – főtitkár
+10:00	HUN	ECONOMX LOUNGE	Program	Podcast interjúk	–	–
+10:00	HUN	QUANTUM STAGE	Előadás	Az AI szerepe az azonnali házhozszállításban	–	–
+10:00	HUN	CINEMATIC STUDIO	Keynote	Művészet az algoritmusok korában	Weiler Péter	képzőművész
+10:00	HUN	MEDIA LAB	Workshop	Vezetett házbejárás + előadás	–	–
+10:10	HUN	MBH BANK VISIONARY STAGE	Előadás	AI a hadviselésben és digitális harctér	–	–
+10:10	HUN	MKIK PROMPT ARÉNA	Workshop	Promptolás kezdőknek: kezdőlépésektől az AI vállalkozásokig	Kerek István	Everengine – vezérigazgató
+10:10	HUN	MÉTA OPEN LAB	Kerekasztal	Hírgyártás: kitörhetünk-e az algoritmusok alkotta buborékból?	Kovács Tibor, Starcz Ákos	Ringier Hungary / Index.hu, Libri-Bookline
+10:30	HUN	MBH BANK VISIONARY STAGE	Kerekasztal	A mesterséges intelligencia biztonságpolitikai kérdései	Bendarzsevszkij Anton, Dr. Somkuti Bálint	Oeconomus, MCC
+10:30	HUN	FUTURE LAB	Előadás	AI + emberi intelligencia = új vállalati logika?	Pintér Róbert	Corvinus Egyetem – egyetemi docens
+10:30	HUN	QUANTUM STAGE	Előadás	Az influenszerek szerepe a socialben	Filó Angéla Katalin	Alapító – Marketing Mentor AI
+10:30	HUN	CINEMATIC STUDIO	Kerekasztal	Művészet és AI: inspiráció vagy imitáció?	Schneider Ákos, Szentpéteri Márton, Török Krisztián Gábor	MOME / MOME / MODEM
+10:35	HUN	MÉTA OPEN LAB	Kerekasztal	Láthatatlan olvasók, látható hatás – Hogyan befolyásolja az MI a médiafogyasztást?	Bíró Pál, Csizmadia Ádám, Ziegler Gábor	Google / OBSERVER / Indamedia
+10:50	HUN	FUTURE LAB	Előadás	Az AI-t alkalmazni nem kell félnetek jó lesz — Észlelési torzítások és vezetői kihívások	Dr. Drótos György	Corvinus – vezetéstudományi intézet docens
+11:00	HUN	MBH BANK VISIONARY STAGE	Előadás	Technológia trendek az európai védelmi iparban	dr. Fellegi Áron	HypeX Consulting Zrt.
+11:00	HUN	QUANTUM STAGE	Előadás	Az AI alapú ügyfélszolgálat és chatbotok újításai	Szilágyi Márk	Country Manager – Daktela Magyarország
+11:00	HUN	MÉTA OPEN LAB	Előadás	Politikai kommunikáció és AI	Petneházy Dávid	Ügyvezető – Promotheus Agency
+11:10	HUN	FUTURE LAB	Előadás	Tech-reneszánsz 2025 – Az AI által újragondolt mobil, touch és VR alkalmazások jövője	Budaházy Szabolcs	AR Works – ügyvezető igazgató
+11:10	HUN	CINEMATIC STUDIO	Bemutató	Studio visit – AI művészet rapid tárlata	Kőszeghy Flóra DLA	építész, képzőművész
+11:20	HUN	MBH BANK VISIONARY STAGE	Kerekasztal	AI a védelmiiparban	dr. Fellegi Áron, Majdik András, Póser Zoltán	HypeX, HUN-REN SZTAKI, N7 Holding
+11:20	HUN	CINEMATIC STUDIO	Bemutató	Studio visit – AI művészet rapid tárlata	Dajana Krueger	művész
+11:25	–	QUANTUM STAGE	Szünet	EBÉDSZÜNET	–	–
+11:30	HUN	FUTURE LAB	Előadás	Kód, bátorság, kreativitás – Magyarország és Közép-Európa nagy AI lehetősége	Zulik Ákos	MCC – vezető oktató
+11:30	HUN	MÉTA OPEN LAB	Kerekasztal	Ki beszél a szavazóhoz? Én vagy az avatárom? Politikai kommunikáció és AI	–	–
+11:40	HUN	MKIK PROMPT ARÉNA	Workshop	AI haladóknak: folyamatautomatizáció a gyakorlatban	Németh Dávid	1337 Partners – alapító
+11:50	HUN	FUTURE LAB	Kerekasztal	Techrobbanás és a startupok életciklusa	Oszkó Péter	OXO Technologies Holding – alapító, vezérigazgató
+11:50	HUN	CINEMATIC STUDIO	Kerekasztal	Pixelek háborúja – Győzelmet arathatnak a valódi képek a generált tartalom felett?	Moderátor: Weiler Péter, Résztvevők: Persely Tamás, Pilák János	feat. / Getty Images
+12:00	HUN	MBH BANK VISIONARY STAGE	Előadás	Az űrszektor, mint az innováció motorja	Dr. Ferencz Orsolya	Miniszteri biztos, KKM
+12:00	–	MÉTA OPEN LAB	Szünet	EBÉDSZÜNET	–	–
+12:15	ENG	QUANTUM STAGE	Előadás	Data-Driven AI: The Essential Roadmap for Legacy Businesses	Kevin Oh (Dél-Korea)	Társalapító & CEO – Synthya Inc.
+12:20	HUN	MBH BANK VISIONARY STAGE	Előadás	AI az űriparban és autonóm küldetések	–	–
+12:20	HUN	FUTURE LAB	Előadás	A vállalati működés átformálása AI segítségével	Rakó Ágnes	KPMG – partner
+12:40	HUN	MBH BANK VISIONARY STAGE	Előadás	Egy úr az űrből – Farkas Bertalantól Kapu Tiborig	–	–
+12:40	HUN	FUTURE LAB	Előadás	NKFI Hivatal hogyan finanszírozza az AI fókuszú megoldásokat	Racskó Péter	NKFIH – főosztályvezető
+12:40	HUN	MKIK PROMPT ARÉNA	Workshop	Tengri.ai – amikor már startupot indítunk az AI segítségével	W. Szabó Péter	tengr.ai – alapító-tulajdonos
+12:40	HUN	QUANTUM STAGE	Kerekasztal	Gen Z vásárlók elvárásai	Trunk Tamás	Z generációs szakértő, blogger
+12:50	HUN	MÉTA OPEN LAB	Keynote	AI vezérelt Google keresés	–	–
+12:55	HUN	MBH BANK VISIONARY STAGE	Előadás	A Vénusz radarjeleitől a valós idejű felismerésig – Nyílt forráskódú MI a bolygókutatásban	Somogyi Viktor	ML fejlesztő, kutató
+13:10	HUN	CINEMATIC STUDIO	Kerekasztal	Dal vagy adat? – Zene a mesterséges intelligencia korában	Lobenwein Norbert	WEEKEND Event Kft. / Akvárium Klub
+13:20	HUN	MBH BANK VISIONARY STAGE	Előadás	Az „EU Space Law” rendelet lehetséges hatásai az európai űrszektorra	Dr. Bartóki-Gönczy Balázs	NKE tanszékvezető
+13:20	HUN	MÉTA OPEN LAB	Kerekasztal	MAKSZ – AI Guideline bemutatása, szakmai vitája	–	–
+13:50	HUN	MKIK PROMPT ARÉNA	Keynote	Milyen innovációt finanszíroz egy bank?	–	–
+13:50	HUN	CINEMATIC STUDIO	Kerekasztal	Hogyan alkalmazható az AI, fotós szemmel	Demeter Vanda, Dr. Gőbölyös Luca, Simó György	Fotóművész / Egyetemi docens / Day One Capital
+13:55	HUN	MBH BANK VISIONARY STAGE	–	EBÉDSZÜNET	–	–
+14:00	–	FUTURE LAB	–	EBÉDSZÜNET	–	–
+14:00	HUN	MÉTA OPEN LAB	Keynote	Túl sok az AI és túl alacsony a kerítés – Ki írja a szabályokat?	Márton Szabolcs	BDPST – kreatívigazgató
+14:10	ENG	MKIK PROMPT ARÉNA	Workshop	AI for Hungarian SMEs: Work Smarter, Not Harder, Globally	Veenenberg Remco (NED)	Think Fintech – startup tanácsadó, társalapító
+14:10	HUN	MÉTA OPEN LAB	Kerekasztal	Az adat, mint kreatív iránytű – AI a kampánytervezésben	Moderátor: Márton Szabolcs	Résztvevők: Alberti Rita (Republic), Jedlicska Márton (Publicis), Radovics Péter (Lounge)
+14:20	HUN	FUTURE LAB	Előadás	MI és fenntarthatóság: Oxigénhiány a csúcs felé vezető úton	Kapornaki Mihály	Trendency Online – data scientist
+14:20	HUN	CINEMATIC STUDIO	Bemutató	Studio visit – AI művészet rapid tárlata	Dr. Gőbölyös Luca	fotóművész, egyetemi docens
+14:30	HUN	MKIK PROMPT ARÉNA	Előadás	Plug&Play – Szabályozás kompatibilis instant ügyfélszolgálat/chatbot	Dr. Pintér Szabolcs	UpScale – partner-ügyvezető
+14:40	HUN	MBH BANK VISIONARY STAGE	Előadás	Minden nap egy lépés a digitális jövő felé	Jeránek Tamás	Siemens Zrt. vezérigazgató
+14:40	HUN	MÉTA OPEN LAB	Kerekasztal	PR vs. Prompt: Ki írja a történetet?	Moderátor: Zámbó Anna	Résztvevők: Bodó Teodóra (Bosch), Bánhegyi Zsófia (MMSZ), Sztaniszláv András (MPRSZ)
+14:40	HUN	CINEMATIC STUDIO	Előadás	Megeszi-e az AI Hollywood-ot? Történetek a tengerentúlról	–	–
+15:00	HUN	MBH BANK VISIONARY STAGE	Előadás	Black factories	Kiss-György Máté	Asura Technologies vezérigazgató
+15:00	ENG	FUTURE LAB	Kerekasztal	Mit tanít az egyetem, amit nem tud az AI?	Bruno van Pottelsberghe, Dr. Charaf Hassan, Prof. Dr. Kovács Levente	Corvinus, BME, Óbudai Egyetem – rektorok
+15:05	HUN	CINEMATIC STUDIO	Előadás	AI a vásznon – A filmipari forradalom és a reklámfilmek jövője	Balika Gergő, Kondacs András	Mid Atlantic Films / Animatiqua
+15:10	ENG	MKIK PROMPT ARÉNA	Előadás	Adatplatformok mint az új idegrendszer: hogyan alakítja át a vállalatokat az MI és a platformizáció	Gulyás Máté	Datapao – CEO
+15:10	ENG	MÉTA OPEN LAB	Előadás	Your Next Favorite Ad Wasn’t Shot — It Was Generated	Carlos Ramas Santamaria (ES)	AI filmrendező, MOME Open oktató
+15:20	HUN	MBH BANK VISIONARY STAGE	Előadás	0-tól AI-ig: ügyfélszolgálat újratöltve	Cseszneki Balázs	SBC Group CEO
+15:20	HUN	FUTURE LAB	Előadás	AI kutatások a műszaki egyetemen	Prof. Dr. Levendovszky János	BME – kutatási és innovációs rektorhelyettes
+15:30	HUN	MKIK PROMPT ARÉNA	Előadás	A kollégám egy AI	–	–
+15:30	HUN	MÉTA OPEN LAB	Előadás	Nemlétező példaképek – Influenszerek a marketingpiacon	Csiszár Gergő	CEO – PFR Group
+15:40	HUN	MBH BANK VISIONARY STAGE	Előadás	Az AI integrációja vállalati projektekben	Dalos-Kovács Gabriella	AI officer, 4IG Group
+15:50	HUN	MÉTA OPEN LAB	Kerekasztal	Miben segít az AI? – Az első AI alapú ügynökség születése	Moderátor: Márton Szabolcs	Résztvevők: Kőteleky Aywee, Vértessy Flóra (BOOM – THE AiGENCY)
+16:00	HUN	VIP LOUNGE	Pódiumbeszélgetés	Valóság, fikció, mesterséges képzelet – Deák Kristóf beszélget Weiler Péterrel	Moderátor: Weiler Péter Résztvevő: Deák Kristóf	képzőművész / Oscar-díjas filmrendező
+16:10	HUN	FUTURE LAB	Pódiumbeszélgetés	Így képezzük az AI mestereket – a hazai egyetemek nagy vállalkozása	Dr. Eigner György, Kozsik Tamás	ÓE dékán; ELTE docens, dékán
+16:40	HUN	MBH BANK VISIONARY STAGE	Előadás	Nőnek-e a fák az AI árnyékában?	Princz Ágoston	Kreatív producer, aktivista
+16:40	HUN	MÉTA OPEN LAB	Kerekasztal	MI és a hálózat mögött: Hogyan formálja az MI az infrastruktúrát?	Moldván Ákos	Head of Marketing Communications – ONE
+16:50	HUN	FUTURE LAB	Előadás	Mit tanítsunk az AI nemzedéknek?	Dr. Setényi János	MCC Tanuláskutató Intézet – igazgató
+17:00	HUN	MBH BANK VISIONARY STAGE	Előadás	Az AI szerepe az autonóm ipari robotikában	Tipary Bence	HUN-REN SZTAKI tudományos munkatársa
+17:00	HUN	MKIK PROMPT ARÉNA	Workshop	MKIK digitalizációs projektek	–	–
+17:10	HUN	FUTURE LAB	Előadás	Az AI ismerete ma előny! Holnap hátrány, ha nem használod!	Dr. Dietz Ferenc	Gábor Dénes Egyetem – elnök
+17:10	HUN	MÉTA OPEN LAB	Kerekasztal	Mesterségesen is intelligens vezetők – Hogyan vezessünk AI-val?	Moderátor: Bánhegyi Zsófia	Résztvevők: Horváth Rita (Publicis), Pajor Attila (WPP Media), Szabó Edina (OMG), Tallósy Imre (MAGNA)
+17:20	HUN	MBH BANK VISIONARY STAGE	Kerekasztal	AI kihívások és megoldások az iparban	Nacsa János és mások	HUN-REN SZTAKI – kutatócsoport
+17:50	HUN	FUTURE LAB	Előadás	A kolostor és az űrhajó. Hová (ne) engedjük be a chatbotokat az egyetemen	Ződi Zsolt	NKE – tudományos főmunkatárs
+`;
 
   const [search, setSearch] = useState("");
   const [langFilter, setLangFilter] = useState<string[]>([]);
